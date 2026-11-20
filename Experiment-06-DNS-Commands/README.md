@@ -6,7 +6,7 @@ Demonstration and Analysis of DNS and Network Diagnostic Commands Using the Term
 ---
 
 ## 2. Aim
-To study the architecture of the Domain Name System (DNS) and execute terminal commands including `nslookup`, `ping`, `ipconfig`, and `tracert` on Windows/Linux environments. The practical covers forward DNS resolution, reverse DNS resolution (PTR), local DNS cache inspection, network interface configuration, and ICMP connectivity analysis.
+To study the architecture of the Domain Name System (DNS) and examine terminal diagnostic commands including `nslookup`, `ping`, `ipconfig`, and `tracert` on Windows and Linux environments for forward DNS resolution, reverse DNS resolution (PTR), local DNS cache inspection, network interface configuration, and ICMP connectivity analysis.
 
 ---
 
@@ -43,14 +43,14 @@ The Domain Name System (DNS) is a hierarchical, decentralized naming system that
 
 #### 1. `nslookup` (Name Server Lookup)
 A cross-platform network administration command-line tool used for querying DNS servers to obtain domain name or IP address mappings.
-- **Forward Lookup:** Queries for an IP address corresponding to a hostname.
-- **Reverse Lookup:** Queries for a hostname associated with an IP address (using the PTR record).
+- **Forward Lookup:** Queries for an IP address corresponding to a hostname (`nslookup <domain-name>`).
+- **Reverse Lookup:** Queries for a hostname associated with an IP address using the PTR record (`nslookup <ip-address>`).
 - **Non-Authoritative Answer:** An answer returned by a caching or recursive server that does not hold the primary master zone file for the queried domain.
 
 #### 2. `ping` (Packet Internet Groper)
 Uses Internet Control Message Protocol (ICMP) **Echo Request (Type 8)** and **Echo Reply (Type 0)** packets to verify network-layer connectivity and measure round-trip time (RTT) and packet loss.
 - In Windows: Defaults to sending 4 echo requests of 32 bytes each.
-- Key switches:
+- Key options:
   - `-t`: Pings the target host continuously until interrupted with `Ctrl + C`.
   - `-a`: Resolves IP address to hostname.
   - `-n count`: Number of echo requests to send.
@@ -65,7 +65,6 @@ Displays all current TCP/IP network configuration values, refreshes DHCP setting
 
 #### 4. `tracert` (Windows) / `traceroute` (Linux)
 Traces the route packets take to reach a destination host by sending packets with incrementing Time To Live (TTL) values, inducing ICMP **Time Exceeded (Type 11)** responses from each intermediary router along the path.
-*(Note: A common student error observed in lab environments is typing `tracenet` instead of `tracert`).*
 
 ---
 
@@ -83,123 +82,16 @@ Traces the route packets take to reach a destination host by sending packets wit
 
 ---
 
-## 6. Command Execution and Practical Reference
+## 6. Command Reference and Working Principles
 
-### 6.1 Forward DNS Lookup for University Domain
-Querying the IP address of `sitnagpur.edu.in`:
-```cmd
-nslookup sitnagpur.edu.in
-```
-
-#### Observed Output:
-```text
-Server:  SIT-CDC.SIT-CDC.SYMBINGP.SOC
-Address:  10.17.28.42
-
-Non-authoritative answer:
-Name:    sitnagpur.edu.in
-Address:  13.204.121.160
-```
-![Forward Lookup](screenshots/nslookup_domain.png)
-
-### 6.2 Forward DNS Lookup for High-Availability Domain (Multiple A & AAAA Records)
-Querying `www.google.com`:
-```cmd
-nslookup www.google.com
-```
-
-#### Observed Output:
-```text
-Server:  SIT-CDC.SIT-CDC.SYMBINGP.SOC
-Address:  10.17.28.42
-
-Non-authoritative answer:
-Name:    www.google.com
-Addresses:  2001:4860:4826:7700::
-          2001:4860:482a:7700::
-          2001:4860:4828:7700::
-          2001:4860:482b:7700::
-          2001:4860:4827:7700::
-          2001:4860:482c:7700::
-          2001:4860:482d:7700::
-          2001:4860:4829:7700::
-          142.251.156.119
-          142.251.157.119
-          142.251.152.119
-          142.251.153.119
-          142.251.155.119
-          142.251.150.119
-          142.251.151.119
-          142.251.154.119
-```
-![Multiple A and AAAA Records](screenshots/nslookup_reverse.png)
-
-### 6.3 Reverse DNS Lookup (PTR Query)
-Resolving an IP address back to its fully qualified domain name:
-```cmd
-nslookup 13.204.121.160
-```
-
-#### Observed Output:
-```text
-Server:  SIT-CDC.SIT-CDC.SYMBINGP.SOC
-Address:  10.17.28.42
-
-Name:    ec2-13-204-121-160.ap-south-1.compute.amazonaws.com
-Address:  13.204.121.160
-```
-
-*When querying an IP without a PTR record (e.g. `142.251.154.119`), the DNS server returns:*
-```text
-*** SIT-CDC.SIT-CDC.SYMBINGP.SOC can't find 142.251.154.119: Non-existent domain
-```
-
-### 6.4 Ping Command and Usage Syntax
-Displaying `ping` options in Windows Command Prompt:
-```cmd
-ping
-```
-
-#### Observed Output:
-```text
-Usage: ping [-t] [-a] [-n count] [-l size] [-f] [-i TTL] [-v TOS]
-            [-r count] [-s count] [[-j host-list] | [-k host-list]]
-            [-w timeout] [-R] [-S srcaddr] [-c compartment] [-p]
-            [-4] [-6] target_name
-
-Options:
-    -t             Ping the specified host until stopped.
-                   To see statistics and continue - type Control-Break;
-                   To stop - type Control-C.
-    -a             Resolve addresses to hostnames.
-    -n count       Number of echo requests to send.
-    -l size        Send buffer size.
-    -f             Set Don't Fragment flag in packet (IPv4-only).
-    -i TTL         Time To Live.
-    -v TOS         Type Of Service (IPv4-only).
-    -w timeout     Timeout in milliseconds to wait for each reply.
-    -4             Force using IPv4.
-    -6             Force using IPv6.
-```
-![Ping Command Usage](screenshots/ping_command.png)
-
-### 6.5 Diagnostic Troubleshooting: Command Name Discrepancies
-In laboratory sessions, attempting to run `tracenet` results in:
-```text
-'tracenet' is not recognized as an internal or external command,
-operable program or batch file.
-```
-- **Correction:** The correct Windows route tracing utility is **`tracert`** (e.g., `tracert google.com`). In Linux/macOS, the equivalent command is **`traceroute`**.
+| Utility | Underlying Protocol | Operating Layer | Primary Diagnostic Function |
+|---|---|---|---|
+| `nslookup` | DNS (UDP/TCP Port 53) | Application Layer | Forward name resolution, reverse IP lookup, DNS record inspection |
+| `ping` | ICMP (IPv4 Protocol 1) | Network Layer | End-to-end reachability, RTT measurement, packet loss detection |
+| `ipconfig` | DHCP / Local OS Stack | Network / Data Link | Adapter configuration, IP/MAC mapping, DNS resolver cache management |
+| `tracert` | ICMP / UDP (TTL manipulation) | Network Layer | Hop-by-hop route tracing, intermediary router identification |
 
 ---
 
-## 7. Output Explanation
-1. **Server (`10.17.28.42`):** The local enterprise recursive caching DNS server that answered the query on behalf of the client workstation.
-2. **Non-authoritative answer:** Confirms that the local DNS server (`10.17.28.42`) fetched the record from another authoritative server or served it directly from its RAM cache.
-3. **Reverse Lookup Result (`ec2-13-204-121-160.ap-south-1.compute.amazonaws.com`):** Identifies that the server hosting `sitnagpur.edu.in` is provisioned on Amazon Web Services (AWS) EC2 in the `ap-south-1` (Mumbai) region.
-4. **Multiple IP Addresses:** Returned for `www.google.com` to achieve DNS round-robin load balancing and geographic distribution across Google's edge cache clusters.
-
----
-
-## 8. Result / Conclusion
+## 7. Result / Conclusion
 DNS resolution and fundamental network troubleshooting utilities (`nslookup`, `ping`, `ipconfig`, `tracert`) were demonstrated. The principles of forward DNS resolution, PTR reverse lookups, IPv4/IPv6 dual-stack addressing, and ICMP connectivity analysis were verified.

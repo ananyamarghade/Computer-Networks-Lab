@@ -42,36 +42,34 @@ Key topologies include **Bus**, **Star**, **Ring**, **Mesh**, and **Hybrid**. Mo
 
 #### 2. Hub (OSI Layer 1 - Physical)
 - **Function:** A multi-port repeater used as a central connection point in traditional star topologies.
-- **Working Mechanism:** When a frame arrives at one port, the electrical signal is regenerated and blindly flooded (broadcast) out of all other ports, regardless of the intended destination.
+- **Working Mechanism:** When a frame arrives at one port, the electrical signal is regenerated and flooded out of all other ports, regardless of the intended destination.
 - **Limitation:** All connected hosts share a single collision domain and a single broadcast domain, leading to high collision probabilities under load and half-duplex operation.
 
 #### 3. Bridge (OSI Layer 2 - Data Link)
 - **Function:** Connects two separate physical LAN segments and filters traffic based on Media Access Control (MAC) addresses.
-- **Working Mechanism:** Reads incoming frames, learns source MAC addresses dynamically, and populates its Forwarding Information Base (FIB). If the destination MAC is on the same segment, the frame is filtered (blocked); if on the other segment, it is forwarded.
+- **Working Mechanism:** Reads incoming frames, learns source MAC addresses dynamically, and populates its Forwarding Information Base (FIB). If the destination MAC is on the same segment, the frame is filtered; if on the other segment, it is forwarded.
 - **Significance:** Divides one large collision domain into two smaller collision domains while keeping a single broadcast domain.
 
 #### 4. Switch (OSI Layer 2 - Data Link / Layer 3 - Network)
 - **Function:** A high-speed multi-port bridge that connects multiple end systems in a local network.
-- **Working Mechanism:** Inspects incoming Ethernet frames, maps the source MAC address to the ingress physical port in its MAC Address Table (Content-Addressable Memory or CAM table), and forwards unicast frames strictly to the designated destination port (microsegmentation). Unregistered destinations or broadcast frames are flooded to all ports except the source port.
+- **Working Mechanism:** Inspects incoming Ethernet frames, maps the source MAC address to the ingress physical port in its MAC Address Table (CAM table), and forwards unicast frames strictly to the designated destination port.
 - **Collision & Broadcast Domains:** Every individual switch port constitutes its own isolated collision domain (full-duplex transmission). All ports default to a single broadcast domain unless segmented using Virtual LANs (VLANs).
 - **Layer 3 Switch:** Integrates hardware-based ASIC packet forwarding to route IP packets between VLANs at wire speed.
 
 #### 5. Router (OSI Layer 3 - Network)
-- **Function:** Interconnects heterogeneous networks (e.g., LAN to WAN, or multiple subnets) and determines the optimal path for forwarding IP packets toward their destination.
+- **Function:** Interconnects heterogeneous networks and determines the optimal path for forwarding IP packets toward their destination.
 - **Working Mechanism:** Maintains routing tables populated via static routes or dynamic routing protocols (e.g., RIP, OSPF, BGP). Strips Layer 2 framing, examines the destination Layer 3 IP address, determines the next-hop interface, encapsulates the packet in a new Layer 2 frame appropriate for the outbound link, and transmits it.
 - **Significance:** Limits and terminates broadcast domains (routers do not forward broadcast packets by default) and isolates collision domains.
 
 #### 6. Gateway (OSI Layers 4 through 7)
 - **Function:** A network node that acts as an entrance to another network, performing protocol translation between fundamentally incompatible network architectures, protocol stacks, or data formats.
-- **Example:** An email gateway converting SMTP messages to SMS, or an IoT gateway translating Zigbee sensor payloads into MQTT/HTTP over IPv4/IPv6.
 
 #### 7. Modem (Modulator - Demodulator)
 - **Function:** Converts digital data from a computer into analog signals suitable for transmission over analog communication media (e.g., telephone lines, coaxial cable), and demodulates incoming analog signals back into digital bitstreams.
-- **Variants:** DSL modem, Cable modem, Fiber Optical Network Terminal (ONT).
 
 #### 8. Network Interface Card (NIC)
-- **Function:** Hardware component (expansion card or integrated chipset) providing the physical and data link connection between a host computer and the network medium.
-- **Characteristics:** Contains a unique 48-bit burned-in physical MAC address (e.g., `00:1A:2B:3C:4D:5E`), implements CSMA/CD or full-duplex Ethernet protocols, and manages serialization/deserialization of frames.
+- **Function:** Hardware component providing the physical and data link connection between a host computer and the network medium.
+- **Characteristics:** Contains a unique 48-bit burned-in physical MAC address, implements CSMA/CD or full-duplex Ethernet protocols, and manages serialization/deserialization of frames.
 
 ---
 
@@ -84,8 +82,8 @@ Key topologies include **Bus**, **Star**, **Ring**, **Mesh**, and **Hybrid**. Mo
 ---
 
 ## 5. Required Software and Tools
-- Network topology visualization or simulation tool: Cisco Packet Tracer, GNS3, or Wireshark.
-- Command-line diagnostic utilities: `ipconfig` / `ifconfig`, `arp -a`, `route print` / `netstat -rn`.
+- Network topology visualization or simulation tools (Packet Tracer, GNS3, or Wireshark).
+- Command-line diagnostic utilities (`ipconfig` / `ifconfig`, `arp -a`, `route print`).
 
 ---
 
@@ -138,32 +136,5 @@ Key topologies include **Bus**, **Star**, **Ring**, **Mesh**, and **Hybrid**. Mo
 
 ---
 
-## 8. Step-by-Step Practical Study Procedure
-1. Inspect local host network adapter configuration via terminal:
-   - On Windows: Run `ipconfig /all` to determine the physical (MAC) address and logical IPv4/IPv6 address.
-   - On Linux: Run `ip -br link` and `ip -br addr`.
-2. Inspect the local Address Resolution Protocol (ARP) table using `arp -a` to view mapped IP-to-MAC associations maintained by Layer 2/3 translation.
-3. Observe the default gateway configuration:
-   - Verify that the default gateway IP address resides on the same subnet as the host's IP address.
-   - Trace the next hop to an external network using `tracert` or `traceroute`.
-4. Contrast the physical appearance and interface types of network equipment:
-   - RJ-45 copper Ethernet ports (10/100/1000Base-T).
-   - SFP/SFP+ optical fiber transceiver cages.
-   - RS-232 / RJ-45 serial console ports for out-of-band management.
-
----
-
-## 9. Sample Observation Table
-
-| Parameter | Laboratory Host Interface | Default Gateway (Router Interface) |
-|---|---|---|
-| Interface Name | Ethernet / eth0 | GigabitEthernet0/0/0 |
-| Physical (MAC) Address | `00:be:43:8d:95:d0` | `c0:c5:20:57:17:80` |
-| Logical (IPv4) Address | `10.17.61.37` | `10.17.61.1` |
-| Subnet Mask | `255.255.252.0` (/22) | `255.255.252.0` (/22) |
-| Role | End station client | Layer 3 default router |
-
----
-
-## 10. Result / Conclusion
+## 8. Result / Conclusion
 The characteristics, operational layers, and architectural differences of primary computer networking elements were thoroughly studied. The distinction between physical (Layer 1), data link (Layer 2), and network (Layer 3) devices was established, confirming how switches eliminate packet collisions via port isolation and routers segment broadcast domains to facilitate internetwork communication.

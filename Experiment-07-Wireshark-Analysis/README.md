@@ -6,12 +6,12 @@ Packet Sniffing and Protocol Analysis of DNS and HTTP/HTTPS (TLS) Traffic Using 
 ---
 
 ## 2. Aim
-To capture live network packets using the Wireshark network protocol analyzer, apply specific display filters, inspect protocol headers layer-by-layer across the OSI/TCP-IP stack, analyze the structure of DNS query and response transactions, and evaluate the security distinctions between plaintext HTTP and encrypted HTTPS (TLS) traffic.
+To study and analyze the packet encapsulation structure of the Domain Name System (DNS) and evaluate the security architecture of plaintext HTTP versus encrypted HTTPS (TLS) using network protocol dissection across the OSI and TCP/IP stack.
 
 ---
 
 ## 3. Theory / Introduction
-Wireshark is an open-source packet analyzer that captures network frames directly from a Network Interface Card (NIC) via the Npcap (Windows) or libpcap (Linux) library. It decodes raw hexadecimal bitstreams into human-readable protocol hierarchies.
+Wireshark is a packet analyzer that captures network frames directly from a Network Interface Card (NIC) via the Npcap or libpcap library, decoding raw bitstreams into protocol hierarchies.
 
 ### 3.1 Encapsulation Hierarchy (OSI Stack Representation)
 
@@ -56,119 +56,41 @@ DNS messages are exchanged over UDP port `53`. The packet format contains:
 ```
 
 ### 3.3 HTTP vs. HTTPS / TLS Analysis
-- **HTTP (Hypertext Transfer Protocol - TCP Port 80):** Transmits data entirely in unencrypted plaintext. Headers (`GET /connecttest.txt HTTP/1.1`), status codes (`HTTP/1.1 200 OK`), and message payloads (`Microsoft Connect Test`) are visible in clear text.
+- **HTTP (Hypertext Transfer Protocol - TCP Port 80):** Transmits data entirely in unencrypted plaintext. Headers, status codes, and message payloads are transmitted in the clear.
 - **HTTPS (HTTP Secure - TCP Port 443):** Wraps HTTP inside a Transport Layer Security (TLS) tunnel. The client and server perform a cryptographic handshake to authenticate the server (via X.509 certificates) and negotiate symmetric encryption keys (AES-GCM / ChaCha20-Poly1305). Once the handshake completes, all application data is encrypted.
 - **Wireshark Display Filter Syntax:**
-  - Filtering by `http` captures unencrypted web traffic on port 80.
-  - Typing `https` directly into the Wireshark filter bar produces a **syntax error** (`""https" is not a valid protocol or protocol field"`). In Wireshark, encrypted secure traffic is filtered using **`tls`**, **`ssl`**, or **`tcp.port == 443`**.
-  - **Important Reality:** Without importing the client's ephemeral symmetric session keys (`SSLKEYLOGFILE`), Wireshark cannot decrypt TLS Application Data.
+  - Filtering by `http` isolates unencrypted web traffic on port 80.
+  - Typing `https` directly into the Wireshark filter bar produces a syntax error (`"https" is not a valid protocol or protocol field`). In Wireshark, secure traffic is filtered using `tls`, `ssl`, or `tcp.port == 443`.
+  - Without the client's session keys, TLS Application Data cannot be read.
 
 ---
 
 ## 4. Objectives
-1. Capture real-time packet streams on an active Ethernet/Wi-Fi interface.
-2. Filter and inspect DNS query/response structures, noting Transaction ID and Flags.
-3. Identify the four protocol layers encapsulated inside an Ethernet frame.
-4. Compare plaintext HTTP payload inspection against encrypted TLS sessions.
-5. Understand Wireshark filter syntax and common configuration mistakes.
+1. Understand packet encapsulation across Ethernet, IPv4, UDP, and TCP layers.
+2. Examine DNS query and response transactions, transaction IDs, and header flags.
+3. Compare the security posture of unencrypted HTTP against encrypted TLS sessions.
+4. Understand protocol dissector filter syntax in network analyzers.
 
 ---
 
 ## 5. Required Software and Tools
-- **Software:** Wireshark (v4.x or higher) with Npcap/WinPcap packet capture driver.
-- **Command-line Utilities:** `nslookup`, web browser (Chrome, Edge, Firefox), or `curl`.
+- **Software:** Wireshark Network Protocol Analyzer with Npcap/libpcap packet capture driver.
+- **Diagnostic Utilities:** `nslookup`, standard web browser, or command-line HTTP clients.
 
 ---
 
-## 6. Step-by-Step Practical Procedure
+## 6. Comparative Analysis: HTTP vs HTTPS (TLS)
 
-### Step 1: Launch Wireshark and Select Interface
-1. Open Wireshark with administrative privileges.
-2. Double-click the active network adapter (e.g., `Ethernet` or `Wi-Fi`) displaying live packet activity.
-
-### Step 2: Capture and Analyze DNS Packets
-1. In the display filter bar, type `dns` and press `Enter`.
-2. Open a command prompt and trigger a DNS query:
-   ```cmd
-   nslookup play.google.com
-   ```
-3. Stop packet capture (`Ctrl + E`).
-4. Locate the captured DNS response packet in the packet list pane.
-
-#### Observed DNS Stream:
-![DNS Packet Stream](screenshots/wireshark_dns_stream.png)
-
-#### Detailed Inspection of DNS Response (Packet #5467):
-![DNS Packet Detail](screenshots/wireshark_dns_packet_detail.png)
-
-#### Packet Layer Breakdown from Capture:
-- **Frame 5467:** 171 bytes on wire (1368 bits).
-- **Ethernet II:**
-  - Source MAC: `c0:c5:20:57:17:80` (Gateway / Router)
-  - Destination MAC: `00:be:43:8d:95:d0` (Workstation NIC)
-  - Type: IPv4 (`0x0800`)
-- **Internet Protocol Version 4:**
-  - Source IP: `10.17.28.42` (DNS Server)
-  - Destination IP: `10.17.61.37` (Local Host)
-  - Protocol: UDP (`17`)
-- **User Datagram Protocol:**
-  - Source Port: `53` (Standard DNS port)
-  - Destination Port: `50518` (Ephemeral client port)
-- **Domain Name System (response):**
-  - Transaction ID: `0x5376`
-  - Flags: `0x8180` Standard query response, No error
-    - Response: `1` (Message is a response)
-    - Opcode: `0` (Standard query)
-    - Authoritative: `0` (Server is not an authority for domain)
-    - Truncated: `0` (Message is not truncated)
-    - Recursion desired: `1`
-    - Recursion available: `1`
-  - Questions: `1` (`play.google.com: type A, class IN`)
-  - Answers: `6` (Returns IPv4 addresses including `142.251.106.113`, `142.251.106.102`, etc.)
-
----
-
-### Step 3: Capture and Analyze HTTP vs HTTPS (TLS) Traffic
-1. In Wireshark, begin a new capture.
-2. In the filter bar, observe what happens when typing `https`:
-   - The filter background turns **red**, with status: `""https" is not a valid protocol or protocol field."`.
-   - The correct display filter is **`http`** for unencrypted web traffic, or **`tls`** / **`tcp.port == 443`** for HTTPS.
-3. Apply filter `http` and observe plaintext packets (e.g. `connecttest.txt` generated by OS network detection).
-
-#### Observed HTTP Filter Error & Traffic:
-![HTTP Filter](screenshots/wireshark_http_filter.png)
-
-#### Detailed Inspection of Plaintext HTTP Packet (#11408):
-![HTTP Packet Detail](screenshots/wireshark_http_packet_detail.png)
-
-#### Packet Layer Breakdown from HTTP Capture:
-- **Frame 11408:** 241 bytes on wire.
-- **Ethernet II:** Src MAC `c0:c5:20:57:17:80` $\rightarrow$ Dst MAC `00:be:43:8d:95:d0`.
-- **IPv4:** Src IP `23.212.0.43` (Microsoft Akamai CDN) $\rightarrow$ Dst IP `10.17.61.37`.
-- **Transmission Control Protocol:**
-  - Source Port: `80` (HTTP)
-  - Destination Port: `58327` (Client ephemeral port)
-  - Flags: `0x018` (`[PSH, ACK]`)
-- **Hypertext Transfer Protocol:**
-  - Status Line: `HTTP/1.1 200 OK`
-  - Content-Type: `text/plain`
-- **Line-based text data:**
-  - Raw payload: `Microsoft Connect Test` *(completely readable in plain text)*
-
----
-
-## 7. Comparative Analysis: HTTP vs HTTPS (TLS)
-
-| Parameter | HTTP (Frame #11408) | HTTPS / TLS (TCP Port 443) |
+| Parameter | HTTP (Plaintext Web Traffic) | HTTPS / TLS (Encrypted Web Traffic) |
 |---|---|---|
-| **Port** | Port 80 | Port 443 |
+| **Standard Port** | Port 80 | Port 443 |
 | **Wireshark Filter** | `http` | `tls` or `tcp.port == 443` (`https` is invalid) |
-| **Confidentiality** | None; payload displayed in plaintext (`Microsoft Connect Test`) | Fully encrypted using symmetric cipher (AES/ChaCha20) |
-| **Integrity** | Vulnerable to tampering / man-in-the-middle injection | Cryptographic HMAC / AEAD tags prevent modification |
+| **Confidentiality** | None; headers, URLs, and payloads visible in clear text | Fully encrypted using symmetric cipher (AES / ChaCha20) |
+| **Integrity** | Vulnerable to packet tampering and injection | Cryptographic HMAC / AEAD tags prevent unauthorized modification |
 | **Authentication** | None | Server identity authenticated via digital X.509 certificate |
-| **Wireshark Visibility** | Headers, URLs, queries, and payload fully readable | Only TLS handshake metadata (SNI, Cipher suites) visible; payload is opaque |
+| **Packet Visibility** | Headers, requests, and response payloads fully readable | Only TLS handshake metadata (SNI, Cipher suites) visible; payload is opaque |
 
 ---
 
-## 8. Result / Conclusion
-Live network traffic was successfully captured and analyzed using Wireshark. The dissection confirmed the hierarchical encapsulation of Ethernet, IPv4, UDP, and TCP protocols. DNS query and response formats were verified via transaction IDs and status flags. The clear-text vulnerability of HTTP was demonstrated and contrasted with the encryption safeguards provided by HTTPS/TLS.
+## 7. Result / Conclusion
+Network packet encapsulation and transport behaviors were analyzed. The dissection confirmed the hierarchical encapsulation of Ethernet, IPv4, UDP, and TCP protocols. DNS query and response formats were verified via transaction IDs and status flags, and the clear-text vulnerabilities of HTTP were contrasted with the encryption safeguards provided by HTTPS/TLS.

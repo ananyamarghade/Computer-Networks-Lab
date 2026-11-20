@@ -1,8 +1,8 @@
 # Computer Networks Laboratory
 
-A comprehensive, curriculum-aligned repository containing practical implementations, protocol analysis studies, and packet capture labs for the undergraduate Computer Networks Laboratory course (B.Tech Computer Science and Engineering).
+A comprehensive, curriculum-aligned repository containing practical implementations, protocol analysis studies, and architectural documentation for the undergraduate Computer Networks Laboratory course (B.Tech Computer Science and Engineering).
 
-This repository covers foundational networking hardware, socket programming using the POSIX Berkeley Sockets API in C (TCP and UDP), terminal-based DNS and ICMP diagnostics, deep packet inspection using Wireshark, flow control protocols, traffic shaping algorithms, and distributed routing algorithms.
+This repository covers foundational networking hardware, socket programming using the POSIX Berkeley Sockets API in C (TCP and UDP), terminal-based DNS and ICMP diagnostics, packet inspection, flow control protocols, traffic shaping algorithms, and distributed routing algorithms.
 
 ---
 
@@ -54,107 +54,39 @@ Computer-Networks-Lab/
 │   └── README.md                            # Networking devices, architecture & comparison
 │
 ├── Experiment-02-TCP-Server/
-│   ├── README.md                            # Comprehensive theory, architecture & algorithms
-│   ├── tcp_server.c                         # Clean TCP server socket code
-│   └── screenshots/                         # Practical execution reference screenshots
+│   ├── README.md                            # Theory, architecture & working principles
+│   └── tcp_server.c                         # Clean TCP server socket code
 │
 ├── Experiment-03-TCP-Client/
-│   ├── README.md                            # TCP client guide, connection logic & algorithms
-│   ├── tcp_client.c                         # Clean TCP client socket code
-│   └── screenshots/                         # Practical execution reference screenshots
+│   ├── README.md                            # Theory, connection logic & working principles
+│   └── tcp_client.c                         # Clean TCP client socket code
 │
 ├── Experiment-04-UDP-Server/
-│   ├── README.md                            # Datagram socket architecture & algorithms
-│   ├── udp_server.c                         # Clean UDP echo server code
-│   └── screenshots/                         # Practical execution reference screenshots
+│   ├── README.md                            # Datagram socket architecture & working principles
+│   └── udp_server.c                         # Clean UDP echo server code
 │
 ├── Experiment-05-UDP-Client/
-│   ├── README.md                            # Connectionless client mechanics & algorithms
-│   ├── udp_client.c                         # Clean UDP interactive client code
-│   └── screenshots/                         # Practical execution reference screenshots
+│   ├── README.md                            # Connectionless client mechanics & working principles
+│   └── udp_client.c                         # Clean UDP interactive client code
 │
 ├── Experiment-06-DNS-Commands/
-│   ├── README.md                            # Terminal diagnostic commands & output analysis
-│   └── screenshots/                         # Command prompt execution screenshots
+│   └── README.md                            # Terminal diagnostic commands reference
 │
 ├── Experiment-07-Wireshark-Analysis/
-│   ├── README.md                            # Deep packet inspection, DNS & HTTP/TLS analysis
-│   └── screenshots/                         # Wireshark trace & packet dissection screenshots
+│   └── README.md                            # Deep packet inspection, DNS & HTTP/TLS analysis
 │
 ├── Experiment-08-Sliding-Window/
-│   ├── README.md                            # Flow control theory, pipeline math & algorithms
-│   ├── sliding_window.c                     # Sliding window (Go-Back-N) simulation code
-│   └── screenshots/                         # Execution output screenshots
+│   ├── README.md                            # Flow control theory, pipeline math & algorithm
+│   └── sliding_window.c                     # Sliding window (Go-Back-N) simulation code
 │
 ├── Experiment-09-Traffic-Shaping/
-│   ├── README.md                            # Leaky Bucket & Token Bucket theory and comparison
+│   ├── README.md                            # Leaky Bucket & Token Bucket theory and algorithms
 │   ├── leaky_bucket.c                       # Clean Leaky Bucket implementation
-│   ├── token_bucket.c                       # Clean Token Bucket implementation
-│   └── screenshots/                         # Execution output screenshots
+│   └── token_bucket.c                       # Clean Token Bucket implementation
 │
 └── Experiment-10-Distance-Vector/
     ├── README.md                            # Bellman-Ford routing algorithm & convergence study
-    ├── distance_vector.c                    # Distance Vector routing table computation code
-    └── screenshots/                         # Converged routing table screenshots
-```
-
----
-
-## Compilation and Execution Guide
-
-### 1. TCP Server & Client (Experiments 02 & 03)
-Open two separate terminal windows:
-```bash
-# Terminal 1 - Start Server:
-cd Experiment-02-TCP-Server
-gcc tcp_server.c -o server
-./server
-
-# Terminal 2 - Start Client:
-cd Experiment-03-TCP-Client
-gcc tcp_client.c -o client
-./client
-```
-
-### 2. UDP Server & Client (Experiments 04 & 05)
-Open two separate terminal windows:
-```bash
-# Terminal 1 - Start UDP Server:
-cd Experiment-04-UDP-Server
-gcc udp_server.c -o server
-./server
-
-# Terminal 2 - Start UDP Client:
-cd Experiment-05-UDP-Client
-gcc udp_client.c -o client
-./client
-```
-
-### 3. Sliding Window Protocol (Experiment 08)
-```bash
-cd Experiment-08-Sliding-Window
-gcc sliding_window.c -o sliding_window
-./sliding_window
-```
-
-### 4. Traffic Shaping Algorithms (Experiment 09)
-```bash
-cd Experiment-09-Traffic-Shaping
-
-# Leaky Bucket:
-gcc leaky_bucket.c -o leaky_bucket
-./leaky_bucket
-
-# Token Bucket:
-gcc token_bucket.c -o token_bucket
-./token_bucket
-```
-
-### 5. Distance Vector Routing Algorithm (Experiment 10)
-```bash
-cd Experiment-10-Distance-Vector
-gcc distance_vector.c -o distance_vector
-./distance_vector
+    └── distance_vector.c                    # Distance Vector routing table computation code
 ```
 
 ---
