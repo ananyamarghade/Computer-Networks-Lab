@@ -1,0 +1,179 @@
+# Experiment 04: UDP Server Socket Programming
+
+## 1. Experiment Title
+Implementation of a Connectionless UDP Echo Server Using Datagram Sockets in C.
+
+---
+
+## 2. Aim
+To design, implement, and analyze a connectionless UDP server in C using POSIX datagram sockets (`SOCK_DGRAM`). The server binds to port `10004`, listens for incoming datagrams from clients using `recvfrom()`, displays the received messages on the console, and echoes each message back to the sender's address using `sendto()`.
+
+---
+
+## 3. Theory / Introduction
+The User Datagram Protocol (UDP) is an un-sequenced, connectionless transport protocol defined in RFC 768. Unlike TCP, UDP transmits independent packets called **datagrams** without establishing an initial end-to-end connection.
+
+### 3.1 Key Characteristics of UDP
+- **Connectionless:** No handshake (no SYN/ACK exchange) occurs before data transmission. Datagrams are transmitted immediately.
+- **Message-Oriented (Preserves Message Boundaries):** Each `sendto()` call generates a distinct datagram. Each `recvfrom()` call reads exactly one datagram. Unlike TCP byte streams, packets do not merge or split.
+- **Unreliable Delivery:** UDP provides best-effort delivery. Packets may be lost, duplicated, delayed, or arrive out of order without retransmission or error notification from the transport layer.
+- **Minimal Overhead:** The UDP header is fixed at only 8 bytes (Source Port, Destination Port, Length, Checksum), compared to TCP's 20–60 byte header, making UDP ideal for low-latency and real-time streaming applications (DNS, DHCP, VoIP, video conferencing).
+
+### 3.2 UDP Server Socket Lifecycle
+
+```
+        socket()           --> Create datagram socket (AF_INET, SOCK_DGRAM)
+           |
+         bind()            --> Bind to IP (INADDR_ANY) and Port (10004)
+           |
+     +-----> recvfrom()    --> Blocks waiting for datagram; captures client IP & port
+     |         |
+     |      sendto()      --> Transmits echo datagram back to client address
+     |         |
+     +---------+           --> Loops to handle further datagrams
+```
+
+*Note: UDP servers do NOT call `listen()` or `accept()`. There is no persistent connection or dedicated child socket descriptor; all communication passes through the single bound datagram socket descriptor.*
+
+---
+
+## 4. Objectives
+1. Understand the architecture and behavior of connectionless datagram sockets.
+2. Implement server-side UDP socket initialization, port binding, and packet reception.
+3. Utilize `recvfrom()` and `sendto()` to capture client socket addresses dynamically.
+4. Contrast the architectural and performance trade-offs between UDP and TCP.
+
+---
+
+## 5. Required Software and Tools
+- **Operating System:** Linux (Ubuntu 20.04/22.04/24.04), WSL (Windows Subsystem for Linux), or any POSIX-compliant UNIX environment.
+- **Compiler:** GCC (GNU Compiler Collection).
+- **Text Editor / IDE:** Gedit, Nano, Vim, or Visual Studio Code.
+- **Terminal:** Bash / GNOME Terminal / Windows Terminal.
+
+---
+
+## 6. Algorithm / Working Principle
+1. Start the program.
+2. Create an IPv4 UDP datagram socket using `socket(AF_INET, SOCK_DGRAM, 0)`.
+3. If socket creation returns a negative integer, display an error and exit.
+4. Initialize the server address structure (`sockaddr_in`):
+   - Set address family to `AF_INET`.
+   - Set IP address to `INADDR_ANY` (accept datagrams across all local interfaces).
+   - Set port to `htons(PORT)` (`10004`).
+5. Bind the socket to the port using `bind()`.
+6. Print server status: `"UDP Echo Server listening on port 10004..."`.
+7. Enter an infinite `while (1)` loop:
+   - Clear the reception buffer using `memset()`.
+   - Invoke `recvfrom()` to wait for and read an incoming datagram while capturing the client's socket address (`client_addr`) and address length (`addrlen`).
+   - If received bytes $\le 0$, continue.
+   - Display the received text string on standard output: `"Received: %s"`.
+   - Echo the identical buffer back to the sender using `sendto()` using the captured `client_addr`.
+8. Close the socket upon shutdown.
+9. End the program.
+
+---
+
+## 7. Implementation Details
+The server implementation is located in [udp_server.c](file:///C:/Users/Dipali/Downloads/cn%20lab/Computer-Networks-Lab/Experiment-04-UDP-Server/udp_server.c).
+
+- **Port Number:** 10004
+- **Buffer Size:** 1024 bytes
+- **Socket Family:** AF_INET (IPv4)
+- **Socket Type:** SOCK_DGRAM (UDP)
+
+---
+
+## 8. Source Code Explanation
+- `SOCK_DGRAM`: Informs the kernel to instantiate a UDP datagram socket rather than a TCP stream socket.
+- `recvfrom()`: Receives a datagram from the network. Crucially, it populates the `(struct sockaddr *)&client_addr` argument with the source IP address and source port of the client that originated the packet, enabling the server to respond without a prior connection.
+- `sendto()`: Sends data to a specific destination endpoint by supplying the target's `sockaddr_in` structure.
+
+---
+
+## 9. Step-by-Step Execution Instructions
+
+### Step 1: Open Terminal
+Open a Linux or WSL terminal and navigate to the UDP server directory:
+```bash
+cd Experiment-04-UDP-Server
+```
+
+### Step 2: Compile the Server Code
+Compile using `gcc`:
+```bash
+gcc udp_server.c -o server
+```
+
+### Step 3: Run the UDP Server
+Launch the server:
+```bash
+./server
+```
+*The server will display its listening status and block at `recvfrom()`, waiting for incoming client datagrams.*
+
+### Step 4: Run the Client (in a separate terminal)
+Open another terminal, navigate to `Experiment-05-UDP-Client`, compile, and launch the UDP client:
+```bash
+cd Experiment-05-UDP-Client
+gcc udp_client.c -o client
+./client
+```
+
+---
+
+## 10. Sample Input
+Incoming datagrams received sequentially from the client:
+1. `"Hey! Today is 25th August 2026\n"`
+2. `"It's Tuesday today\n"`
+3. `"This is UDP server-client communication\n"`
+4. `"UDP IS CONNECTIONLESS, while TCP IS CONNECTION-ORIENTED\n"`
+
+---
+
+## 11. Expected Output
+
+```text
+UDP Echo Server listening on port 10004...
+Received: Hey! Today is 25th August 2026
+Received: It's Tuesday today
+Received: This is UDP server-client communication
+Received: UDP IS CONNECTIONLESS, while TCP IS CONNECTION-ORIENTED
+```
+
+### Screenshot Reference
+![UDP Server Output](screenshots/udp_server_output.png)
+
+---
+
+## 12. Output Explanation
+- `UDP Echo Server listening on port 10004...`: Indicates successful creation and binding of the UDP datagram socket on port 10004.
+- `Received: ...`: Confirms that `recvfrom()` unblocked upon datagram arrival, copied the packet payload into memory, and identified the source address without requiring any handshaking or virtual circuit establishment.
+
+---
+
+## 13. Result / Conclusion
+A connectionless UDP echo server was successfully implemented in C using POSIX datagram sockets. The server demonstrated successful binding to port 10004, datagram packet reception via `recvfrom()`, message parsing, and echo reflection via `sendto()`.
+
+---
+
+## 14. Important Viva Questions with Answers
+
+### Q1: Why are `listen()` and `accept()` not used in UDP socket programming?
+**Answer:** `listen()` and `accept()` are specific to connection-oriented protocols like TCP that require establishing a virtual circuit and state tracking before data transfer. Since UDP is connectionless and stateless, every datagram is self-contained with its own destination header. The server simply calls `recvfrom()` directly on the bound socket.
+
+### Q2: What is the maximum size of a UDP datagram?
+**Answer:** The theoretical maximum size of an IPv4 UDP packet is 65,535 bytes (65,507 bytes payload after subtracting the 20-byte IP header and 8-byte UDP header). However, packets larger than the link Maximum Transmission Unit (MTU, typically 1500 bytes for Ethernet) undergo IP fragmentation, which increases the likelihood of packet loss.
+
+### Q3: What happens to a UDP packet if the destination port is closed?
+**Answer:** The destination host's operating system kernel rejects the packet and sends an **ICMP Port Unreachable (Type 3, Code 3)** error packet back to the sender.
+
+### Q4: How does UDP verify packet integrity?
+**Answer:** UDP includes an optional 16-bit **checksum** field in its header. The checksum covers a 12-byte pseudo-header (containing source IP, destination IP, protocol number, and UDP length), the 8-byte UDP header, and the data payload. If the calculated checksum does not match, the packet is discarded silently.
+
+### Q5: Name four standard network protocols that run over UDP.
+**Answer:**
+1. **DNS (Domain Name System):** Port 53 (for low-latency queries).
+2. **DHCP (Dynamic Host Configuration Protocol):** Ports 67/68.
+3. **TFTP (Trivial File Transfer Protocol):** Port 69.
+4. **NTP (Network Time Protocol):** Port 123.
