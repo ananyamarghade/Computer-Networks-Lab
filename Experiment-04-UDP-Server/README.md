@@ -63,7 +63,7 @@ The User Datagram Protocol (UDP) is an un-sequenced, connectionless transport pr
    - Set port to `htons(PORT)` (`10004`).
 5. Bind the socket to the port using `bind()`.
 6. Print server status: `"UDP Echo Server listening on port 10004..."`.
-7. Enter an infinite `while (1)` loop:
+7. Enter a `while (1)` loop:
    - Clear the reception buffer using `memset()`.
    - Invoke `recvfrom()` to wait for and read an incoming datagram while capturing the client's socket address (`client_addr`) and address length (`addrlen`).
    - If received bytes $\le 0$, continue.
@@ -74,90 +74,12 @@ The User Datagram Protocol (UDP) is an un-sequenced, connectionless transport pr
 
 ---
 
-## 7. Implementation Details
-The server implementation is located in [udp_server.c](file:///C:/Users/Dipali/Downloads/cn%20lab/Computer-Networks-Lab/Experiment-04-UDP-Server/udp_server.c).
-
-- **Port Number:** 10004
-- **Buffer Size:** 1024 bytes
-- **Socket Family:** AF_INET (IPv4)
-- **Socket Type:** SOCK_DGRAM (UDP)
-
----
-
-## 8. Source Code Explanation
-- `SOCK_DGRAM`: Informs the kernel to instantiate a UDP datagram socket rather than a TCP stream socket.
-- `recvfrom()`: Receives a datagram from the network. Crucially, it populates the `(struct sockaddr *)&client_addr` argument with the source IP address and source port of the client that originated the packet, enabling the server to respond without a prior connection.
-- `sendto()`: Sends data to a specific destination endpoint by supplying the target's `sockaddr_in` structure.
-
----
-
-## 9. Step-by-Step Execution Instructions
-
-### Step 1: Open Terminal
-Open a Linux or WSL terminal and navigate to the UDP server directory:
-```bash
-cd Experiment-04-UDP-Server
-```
-
-### Step 2: Compile the Server Code
-Compile using `gcc`:
-```bash
-gcc udp_server.c -o server
-```
-
-### Step 3: Run the UDP Server
-Launch the server:
-```bash
-./server
-```
-*The server will display its listening status and block at `recvfrom()`, waiting for incoming client datagrams.*
-
-### Step 4: Run the Client (in a separate terminal)
-Open another terminal, navigate to `Experiment-05-UDP-Client`, compile, and launch the UDP client:
-```bash
-cd Experiment-05-UDP-Client
-gcc udp_client.c -o client
-./client
-```
-
----
-
-## 10. Sample Input
-Incoming datagrams received sequentially from the client:
-1. `"Hey! Today is 25th August 2026\n"`
-2. `"It's Tuesday today\n"`
-3. `"This is UDP server-client communication\n"`
-4. `"UDP IS CONNECTIONLESS, while TCP IS CONNECTION-ORIENTED\n"`
-
----
-
-## 11. Expected Output
-
-```text
-UDP Echo Server listening on port 10004...
-Received: Hey! Today is 25th August 2026
-Received: It's Tuesday today
-Received: This is UDP server-client communication
-Received: UDP IS CONNECTIONLESS, while TCP IS CONNECTION-ORIENTED
-```
-
-### Screenshot Reference
-![UDP Server Output](screenshots/udp_server_output.png)
-
----
-
-## 12. Output Explanation
-- `UDP Echo Server listening on port 10004...`: Indicates successful creation and binding of the UDP datagram socket on port 10004.
-- `Received: ...`: Confirms that `recvfrom()` unblocked upon datagram arrival, copied the packet payload into memory, and identified the source address without requiring any handshaking or virtual circuit establishment.
-
----
-
-## 13. Result / Conclusion
+## 7. Result / Conclusion
 A connectionless UDP echo server was successfully implemented in C using POSIX datagram sockets. The server demonstrated successful binding to port 10004, datagram packet reception via `recvfrom()`, message parsing, and echo reflection via `sendto()`.
 
 ---
 
-## 14. Important Viva Questions with Answers
+## 8. Important Viva Questions with Answers
 
 ### Q1: Why are `listen()` and `accept()` not used in UDP socket programming?
 **Answer:** `listen()` and `accept()` are specific to connection-oriented protocols like TCP that require establishing a virtual circuit and state tracking before data transfer. Since UDP is connectionless and stateless, every datagram is self-contained with its own destination header. The server simply calls `recvfrom()` directly on the bound socket.

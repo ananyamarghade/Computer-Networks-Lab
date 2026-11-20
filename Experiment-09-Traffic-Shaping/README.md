@@ -91,7 +91,7 @@ The Token Bucket algorithm decouples packet queuing from rate regulation:
 
 ## 7. Algorithms & Working Principles
 
-### 7.1 Algorithm: Leaky Bucket (`leaky_bucket.c`)
+### 7.1 Algorithm: Leaky Bucket
 1. Read bucket capacity $B$, outgoing rate $R$, and number of time units $N$.
 2. Read the array of incoming packets $P[i]$ for each time interval $i = 0$ to $N - 1$.
 3. Initialize `stored = 0`.
@@ -108,13 +108,13 @@ The Token Bucket algorithm decouples packet queuing from rate regulation:
    - Else:
      - Set `sent = R`.
      - Set `stored = stored - R`.
-   - Print time unit, incoming packet count, overflow count, sent count, and packets remaining in bucket.
+   - Display time interval, incoming, overflow, sent, and stored packet counts.
 5. While `stored > 0` (empty remaining buffer):
    - Transmit up to $R$ packets each cycle.
-   - Print sent count and packets remaining until empty.
+   - Display sent count and packets remaining until empty.
 6. End program.
 
-### 7.2 Algorithm: Token Bucket (`token_bucket.c`)
+### 7.2 Algorithm: Token Bucket
 1. Read bucket capacity `cap`, token generation rate `rate`, and number of time units `n`.
 2. Initialize `token = 0`, `wait = 0`.
 3. For each time unit $i = 1$ to $n$:
@@ -130,154 +130,20 @@ The Token Bucket algorithm decouples packet queuing from rate regulation:
      - Transmit packets equal to available tokens: `send = token`.
      - Deduct sent packets: `wait = wait - send`.
      - Exhaust tokens: `token = 0`.
-   - Print time unit, sent count, queued count, and tokens remaining.
+   - Display sent count, queued count, and tokens remaining.
 4. While `wait > 0` (drain remaining queue):
    - Generate tokens: `token = token + rate`. If `token > cap`, `token = cap`.
    - Transmit packets up to available tokens.
-   - Print sent and queued counts until `wait == 0`.
 5. End program.
 
 ---
 
-## 8. Implementation Details
-Source code files:
-- [leaky_bucket.c](file:///C:/Users/Dipali/Downloads/cn%20lab/Computer-Networks-Lab/Experiment-09-Traffic-Shaping/leaky_bucket.c)
-- [token_bucket.c](file:///C:/Users/Dipali/Downloads/cn%20lab/Computer-Networks-Lab/Experiment-09-Traffic-Shaping/token_bucket.c)
-
----
-
-## 9. Step-by-Step Execution Instructions
-
-### Step 1: Open Terminal
-Navigate to the traffic shaping directory:
-```bash
-cd Experiment-09-Traffic-Shaping
-```
-
-### Step 2: Compile Both Programs
-```bash
-gcc leaky_bucket.c -o leaky_bucket
-gcc token_bucket.c -o token_bucket
-```
-
-### Step 3: Run Leaky Bucket
-```bash
-./leaky_bucket
-```
-
-### Step 4: Run Token Bucket
-```bash
-./token_bucket
-```
-
----
-
-## 10. Sample Input and Expected Output
-
-### 10.1 Leaky Bucket Execution
-
-#### Input:
-```text
-Enter bucket capacity: 7
-Enter outgoing rate: 6
-Enter number of time units: 3
-Enter incoming packets: 6
-Enter incoming packets: 6
-Enter incoming packets: 7
-```
-
-#### Expected Output:
-```text
-Time 1
-Incoming = 6
-Overflow = 0
-Sent = 6
-Packets left = 0
-
-Time 2
-Incoming = 6
-Overflow = 0
-Sent = 6
-Packets left = 0
-
-Time 3
-Incoming = 7
-Overflow = 0
-Sent = 6
-Packets left = 1
-
-Sent = 1
-Packets left = 0
-```
-
-#### Screenshot Reference:
-![Leaky Bucket Output](screenshots/leaky_bucket_execution.png)
-
----
-
-### 10.2 Token Bucket Execution
-
-#### Input:
-```text
-Enter bucket capacity: 10
-Enter token rate: 5
-Enter number of time units: 5
-Enter incoming packets: 11
-Enter incoming packets: 10
-Enter incoming packets: 10
-Enter incoming packets: 5
-Enter incoming packets: 5
-```
-
-#### Expected Output:
-```text
-Time 1
-Sent = 5
-Queued = 6
-Tokens left = 0
-Time 2
-Sent = 5
-Queued = 11
-Tokens left = 0
-Time 3
-Sent = 5
-Queued = 16
-Tokens left = 0
-Time 4
-Sent = 5
-Queued = 16
-Tokens left = 0
-Time 5
-Sent = 5
-Queued = 16
-Tokens left = 0
-Sent = 5
-Queued = 11
-Sent = 5
-Queued = 6
-Sent = 5
-Queued = 1
-Sent = 1
-Queued = 0
-```
-
-#### Screenshot Reference:
-![Token Bucket Output](screenshots/token_bucket_execution.png)
-
----
-
-## 11. Output Explanation
-- **Leaky Bucket:** In Time 3, with 7 incoming packets and an outgoing rate of 6, the bucket transmits exactly 6 packets and queues 1 packet (`Packets left = 1`). In the subsequent drain cycle, the remaining packet is transmitted at the same regulated rate.
-- **Token Bucket:** At Time 1, 11 packets arrive but only 5 tokens are generated (`rate = 5`), allowing 5 packets to be transmitted immediately while 6 remain in the queue. In subsequent intervals, burst arrivals accumulate until traffic slows down, allowing the accumulated tokens to steadily drain the waiting queue.
-
----
-
-## 12. Result / Conclusion
+## 8. Result / Conclusion
 Both the Leaky Bucket and Token Bucket traffic shaping algorithms were implemented and analyzed in C. The experiment confirmed that Leaky Bucket enforces a strict constant output rate by discarding excess packets, while Token Bucket enables burst handling proportional to accumulated tokens.
 
 ---
 
-## 13. Important Viva Questions with Answers
+## 9. Important Viva Questions with Answers
 
 ### Q1: What is the key distinction between traffic shaping and traffic policing?
 **Answer:** **Traffic shaping** smooths bursty traffic by buffering packets in queues and releasing them at a controlled rate, minimizing packet loss at the cost of slight queuing delay. **Traffic policing** monitors traffic compliance and immediately drops or remarks packets that exceed the agreed traffic profile without queuing.

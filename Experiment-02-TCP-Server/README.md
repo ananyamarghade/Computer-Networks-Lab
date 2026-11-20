@@ -6,7 +6,7 @@ Implementation of a Connection-Oriented TCP Server Using Berkeley Sockets in C.
 ---
 
 ## 2. Aim
-To design, implement, and analyze a connection-oriented TCP server in C using the POSIX socket API. The server must create a stream socket, bind it to an IPv4 address and port `8080`, listen for incoming connection requests, accept an incoming connection from a TCP client, receive a client message, send a reply, print the client's ephemeral port, and terminate the session gracefully.
+To design, implement, and analyze a connection-oriented TCP server in C using the POSIX socket API. The server creates a stream socket, binds to port `8080`, listens for incoming connection requests, accepts an incoming connection from a TCP client, receives data, sends a reply, and terminates the session cleanly.
 
 ---
 
@@ -44,7 +44,7 @@ The Transmission Control Protocol (TCP) is a core transport-layer protocol provi
 - `setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen)`: Sets socket options. Setting `SO_REUSEADDR` allows the local address to be reused immediately without waiting for the `TIME_WAIT` socket state to expire.
 - `bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`: Associates the socket descriptor with a specific local IP address and port number.
 - `listen(int sockfd, int backlog)`: Marks the socket as passive to accept incoming connections. The `backlog` argument sets the maximum length of the queue of pending connections.
-- `accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)`: Extracts the first connection request on the queue of pending connections for the listening socket, creates a new connected socket descriptor (`new_socket`), and returns it.
+- `accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)`: Extracts the first connection request on the queue of pending connections for the listening socket, creates a new connected socket descriptor, and returns it.
 - `read()` / `send()`: Performs input/output over the established stream.
 
 ---
@@ -86,85 +86,12 @@ The Transmission Control Protocol (TCP) is a core transport-layer protocol provi
 
 ---
 
-## 7. Implementation Details
-The server implementation is located in [tcp_server.c](file:///C:/Users/Dipali/Downloads/cn%20lab/Computer-Networks-Lab/Experiment-02-TCP-Server/tcp_server.c).
-
-- **Port Number:** 8080
-- **Buffer Size:** 1024 bytes
-- **Socket Family:** AF_INET (IPv4)
-- **Socket Type:** SOCK_STREAM (TCP)
-
----
-
-## 8. Source Code Explanation
-- `#include <sys/socket.h>` and `#include <netinet/in.h>`: Provide declarations for socket functions, socket structures (`struct sockaddr_in`), and internet protocol constants.
-- `htons(PORT)`: "Host to Network Short" converts 16-bit port integers from little-endian host architecture to big-endian network byte order.
-- `INADDR_ANY`: Allows the server to bind to `0.0.0.0`, listening on loopback (`127.0.0.1`) as well as all active physical and wireless network interfaces.
-- `accept()`: Generates a distinct connected socket descriptor (`new_socket`) dedicated solely to communication with the connected client, leaving the original `server_fd` free to accept further connections.
-- `ntohs(address.sin_port)`: Converts the client's dynamically assigned ephemeral port back to host byte order for display.
-
----
-
-## 9. Step-by-Step Execution Instructions
-
-### Step 1: Open Terminal
-Open a Linux or WSL terminal and navigate to the experiment directory:
-```bash
-cd Experiment-02-TCP-Server
-```
-
-### Step 2: Compile the Server Code
-Compile using `gcc`:
-```bash
-gcc tcp_server.c -o server
-```
-
-### Step 3: Run the Server
-Launch the compiled binary:
-```bash
-./server
-```
-*The server will block at `accept()` awaiting a connection from the client.*
-
-### Step 4: Run the Client (in a separate terminal)
-Navigate to `Experiment-03-TCP-Client` and run the client binary:
-```bash
-./client
-```
-
----
-
-## 10. Sample Input
-- Incoming client message sent across socket: `"HELLO from CLIENT"`
-
----
-
-## 11. Expected Output
-
-```text
-HELLO from CLIENT
-Hello message sent!
-Port no 48789
-```
-
-### Screenshot Reference
-![TCP Server Output](screenshots/tcp_server_output.png)
-
----
-
-## 12. Output Explanation
-- `HELLO from CLIENT`: The text payload transmitted by the client over the established TCP stream, read into the buffer via `read()`, and printed to standard output.
-- `Hello message sent!`: Confirmation that the server executed `send()` to return the greeting `"Hello from server"` to the client.
-- `Port no 48789`: The ephemeral port number assigned dynamically by the operating system to the client process for this TCP session.
-
----
-
-## 13. Result / Conclusion
+## 7. Result / Conclusion
 A connection-oriented TCP server was successfully implemented in C using POSIX stream sockets. The program demonstrated reliable socket creation, port binding, passive connection listening, client acceptance, bidirectional data exchange, and graceful socket shutdown.
 
 ---
 
-## 14. Important Viva Questions with Answers
+## 8. Important Viva Questions with Answers
 
 ### Q1: What is the purpose of the `listen()` system call in a TCP server?
 **Answer:** `listen()` converts an active socket created by `socket()` into a passive socket that can accept incoming connection requests from clients. It also specifies the `backlog` parameter, which defines the maximum number of pending connections queued before incoming requests are refused.

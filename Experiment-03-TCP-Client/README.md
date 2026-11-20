@@ -6,7 +6,7 @@ Implementation of a Connection-Oriented TCP Client Using Berkeley Sockets in C.
 ---
 
 ## 2. Aim
-To design, implement, and analyze an active TCP client program in C using POSIX stream sockets. The client must establish a connection with the TCP server listening on loopback IP `127.0.0.1` and port `8080`, transmit a client greeting message (`"HELLO from CLIENT"`), wait for and display the server's response (`"Hello from server"`), and terminate the connection cleanly.
+To design, implement, and analyze an active TCP client program in C using POSIX stream sockets. The client establishes a connection with the TCP server listening on loopback IP `127.0.0.1` and port `8080`, transmits a client greeting message (`"HELLO from CLIENT"`), receives the server's response (`"Hello from server"`), and terminates the connection cleanly.
 
 ---
 
@@ -33,7 +33,7 @@ While a TCP server performs a **passive open** by binding to a port and waiting 
 - `socket(AF_INET, SOCK_STREAM, 0)`: Allocates an active stream socket descriptor for IPv4 communication.
 - `inet_pton(int af, const char *src, void *dst)`: "Internet Presentation to Numeric" converts a human-readable IPv4 dotted-decimal string (such as `"127.0.0.1"`) into binary form in network byte order stored in `in_addr`.
 - `connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)`: Connects the socket referred to by `sockfd` to the address specified by `addr`. This triggers the kernel to:
-  1. Assign an unused ephemeral port (e.g., `48789`) from the local operating system range.
+  1. Assign an unused ephemeral port from the local operating system range.
   2. Initiate the TCP three-way handshake by transmitting a SYN segment.
   3. Block until the SYN+ACK arrives from the server and the ACK is transmitted, placing the socket into the `ESTABLISHED` state.
 - `send()` and `read()`: Transmit and receive payloads through the established full-duplex byte stream.
@@ -76,87 +76,12 @@ While a TCP server performs a **passive open** by binding to a port and waiting 
 
 ---
 
-## 7. Implementation Details
-The client implementation is located in [tcp_client.c](file:///C:/Users/Dipali/Downloads/cn%20lab/Computer-Networks-Lab/Experiment-03-TCP-Client/tcp_client.c).
-
-- **Target Server IP:** `127.0.0.1` (IPv4 Loopback)
-- **Target Server Port:** `8080`
-- **Buffer Size:** 1024 bytes
-- **Socket Family:** AF_INET (IPv4)
-- **Socket Type:** SOCK_STREAM (TCP)
-
----
-
-## 8. Source Code Explanation
-- `inet_pton()`: Replaces obsolete functions like `inet_addr()` or `inet_aton()`, providing robust support for standard address formats and IPv6 compatibility.
-- `connect()`: The client does not call `bind()` explicitly. Instead, the operating system kernel automatically binds the socket to an ephemeral local port upon calling `connect()`.
-- Error Checking: If `connect()` fails (e.g., if the server is not yet running), the program prints `Connection Failed` rather than crashing, illustrating proper network fault handling.
-
----
-
-## 9. Step-by-Step Execution Instructions
-
-### Step 1: Ensure Server is Running
-Before running the client, ensure the TCP server from **Experiment 02** is active and listening:
-```bash
-# In Terminal 1:
-cd Experiment-02-TCP-Server
-gcc tcp_server.c -o server
-./server
-```
-
-### Step 2: Open Terminal for Client
-Open a second terminal window and navigate to the client experiment directory:
-```bash
-# In Terminal 2:
-cd Experiment-03-TCP-Client
-```
-
-### Step 3: Compile the Client Code
-Compile using `gcc`:
-```bash
-gcc tcp_client.c -o client
-```
-
-### Step 4: Execute the Client
-Launch the compiled client:
-```bash
-./client
-```
-
----
-
-## 10. Sample Input
-- Predefined message buffer payload: `"HELLO from CLIENT"`
-
----
-
-## 11. Expected Output
-
-```text
-Hello message sent
-Hello from server
-```
-
-### Screenshot Reference
-![TCP Client Output](screenshots/tcp_client_output.png)
-
-*(Note: If executed when the server is offline, the client cleanly outputs `Connection Failed` as shown in the screenshot).*
-
----
-
-## 12. Output Explanation
-- `Hello message sent`: Confirms that the `send()` system call successfully pushed the `"HELLO from CLIENT"` bytes onto the outbound TCP socket send buffer.
-- `Hello from server`: The message received back from the server process over the established TCP stream via `read()` and printed to standard output.
-
----
-
-## 13. Result / Conclusion
+## 7. Result / Conclusion
 A connection-oriented TCP client was successfully implemented in C using POSIX stream sockets. The client demonstrated proper address conversion, active connection initiation via three-way handshake, payload transmission, synchronized response reception, and clean disconnection.
 
 ---
 
-## 14. Important Viva Questions with Answers
+## 8. Important Viva Questions with Answers
 
 ### Q1: Why does a TCP client rarely call `bind()` explicitly?
 **Answer:** An explicit `bind()` binds a socket to a specific port. For clients, any available port is acceptable. The operating system kernel automatically selects an unused high-order ephemeral port when `connect()` is invoked, avoiding port collision issues.
