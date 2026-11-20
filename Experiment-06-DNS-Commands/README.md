@@ -203,22 +203,3 @@ operable program or batch file.
 
 ## 8. Result / Conclusion
 DNS resolution and fundamental network troubleshooting utilities (`nslookup`, `ping`, `ipconfig`, `tracert`) were demonstrated. The principles of forward DNS resolution, PTR reverse lookups, IPv4/IPv6 dual-stack addressing, and ICMP connectivity analysis were verified.
-
----
-
-## 9. Important Viva Questions with Answers
-
-### Q1: What is the difference between an authoritative and a non-authoritative DNS response?
-**Answer:** An **authoritative response** originates directly from a name server configured with the primary or secondary master zone file for that domain. A **non-authoritative response** comes from a recursive resolver or third-party DNS server that answered the query using cached data or by querying another name server.
-
-### Q2: What is a reverse DNS lookup, and which record type does it utilize?
-**Answer:** A reverse DNS lookup translates an IP address back to its associated hostname. It uses **PTR (Pointer)** records located in the special reverse lookup domains `in-addr.arpa` (for IPv4) and `ip6.arpa` (for IPv6).
-
-### Q3: What is the significance of the `ipconfig /flushdns` command?
-**Answer:** It purges the local operating system DNS resolver cache stored in memory. This is essential when a domain's IP mapping has changed, but the local machine continues attempting to connect to an outdated, cached IP address.
-
-### Q4: How does `tracert` determine intermediate router hops?
-**Answer:** `tracert` sends a sequence of packets with increasing Time To Live (TTL) values, starting at `TTL = 1`. The first router decrements the TTL to 0, drops the packet, and returns an ICMP **Time Exceeded (Type 11, Code 0)** message to the sender, revealing its IP address. This continues incrementing until the destination responds.
-
-### Q5: What is the default transport protocol and port used by DNS?
-**Answer:** DNS primarily uses **UDP port 53** for standard queries and responses due to its low overhead and latency. However, it falls back to **TCP port 53** for zone transfers (AXFR) or when response payloads exceed 512 bytes (without EDNS0).

@@ -88,25 +88,3 @@ The Transmission Control Protocol (TCP) is a core transport-layer protocol provi
 
 ## 7. Result / Conclusion
 A connection-oriented TCP server was successfully implemented in C using POSIX stream sockets. The program demonstrated reliable socket creation, port binding, passive connection listening, client acceptance, bidirectional data exchange, and graceful socket shutdown.
-
----
-
-## 8. Important Viva Questions with Answers
-
-### Q1: What is the purpose of the `listen()` system call in a TCP server?
-**Answer:** `listen()` converts an active socket created by `socket()` into a passive socket that can accept incoming connection requests from clients. It also specifies the `backlog` parameter, which defines the maximum number of pending connections queued before incoming requests are refused.
-
-### Q2: Why does `accept()` create a second socket descriptor?
-**Answer:** `accept()` returns a new socket descriptor dedicated specifically to the established client connection for reading and writing data. The original listening socket (`server_fd`) remains untouched and continues listening for other incoming connection requests, enabling concurrent or iterative connection handling.
-
-### Q3: What is the significance of `htons()` and `ntohs()`?
-**Answer:** Network protocols require data to be transmitted in Big-Endian format (Network Byte Order). x86/x64 host architectures typically store data in Little-Endian format (Host Byte Order). `htons()` (Host to Network Short) and `ntohs()` (Network to Host Short) convert 16-bit integer values (like port numbers) between these representations.
-
-### Q4: Why is `setsockopt` with `SO_REUSEADDR` needed?
-**Answer:** When a TCP server shuts down, the bound local port enters the `TIME_WAIT` state for a duration of $2 \times \text{MSL}$ (Maximum Segment Lifetime). Without `SO_REUSEADDR`, restarting the server immediately causes `bind()` to fail with the error `Address already in use`.
-
-### Q5: What happens during the TCP three-way handshake?
-**Answer:**
-1. **SYN:** Client sends a SYN packet with an initial sequence number ($ISN_C$).
-2. **SYN-ACK:** Server responds with a SYN-ACK containing its own $ISN_S$ and acknowledges $ISN_C + 1$.
-3. **ACK:** Client sends an ACK acknowledging $ISN_S + 1$. Both endpoints transition to the `ESTABLISHED` state.

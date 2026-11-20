@@ -140,22 +140,3 @@ The Token Bucket algorithm decouples packet queuing from rate regulation:
 
 ## 8. Result / Conclusion
 Both the Leaky Bucket and Token Bucket traffic shaping algorithms were implemented and analyzed in C. The experiment confirmed that Leaky Bucket enforces a strict constant output rate by discarding excess packets, while Token Bucket enables burst handling proportional to accumulated tokens.
-
----
-
-## 9. Important Viva Questions with Answers
-
-### Q1: What is the key distinction between traffic shaping and traffic policing?
-**Answer:** **Traffic shaping** smooths bursty traffic by buffering packets in queues and releasing them at a controlled rate, minimizing packet loss at the cost of slight queuing delay. **Traffic policing** monitors traffic compliance and immediately drops or remarks packets that exceed the agreed traffic profile without queuing.
-
-### Q2: Can the Leaky Bucket algorithm handle bursty transmissions?
-**Answer:** No. The classic Leaky Bucket strictly enforces a fixed, constant output rate regardless of how bursty the incoming traffic is. If incoming bursts exceed the bucket capacity, packets are dropped.
-
-### Q3: How does Token Bucket allow burst transmission?
-**Answer:** When the network link is idle, tokens accumulate in the bucket up to capacity $C$. When a sudden burst of packets arrives, the sender can consume multiple accumulated tokens at once, transmitting a burst of packets at wire speed up to the bucket capacity $C$.
-
-### Q4: What happens in a Token Bucket if tokens arrive but the bucket is already full?
-**Answer:** Excess tokens overflow and are discarded. Unlike Leaky Bucket, discarding tokens does not cause any packet data loss; it simply caps the maximum burst size that the system can support in the next cycle.
-
-### Q5: What is a dual leaky bucket algorithm?
-**Answer:** A dual leaky bucket combines two buckets in series: the first bucket regulates the peak transmission rate, and the second bucket regulates the sustainable (average) transmission rate, commonly used in ATM networks.

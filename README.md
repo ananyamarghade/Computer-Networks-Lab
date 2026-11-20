@@ -54,22 +54,22 @@ Computer-Networks-Lab/
 │   └── README.md                            # Networking devices, architecture & comparison
 │
 ├── Experiment-02-TCP-Server/
-│   ├── README.md                            # Comprehensive theory, guide & viva questions
+│   ├── README.md                            # Comprehensive theory, architecture & algorithms
 │   ├── tcp_server.c                         # Clean TCP server socket code
 │   └── screenshots/                         # Practical execution reference screenshots
 │
 ├── Experiment-03-TCP-Client/
-│   ├── README.md                            # TCP client guide, connection logic & viva questions
+│   ├── README.md                            # TCP client guide, connection logic & algorithms
 │   ├── tcp_client.c                         # Clean TCP client socket code
 │   └── screenshots/                         # Practical execution reference screenshots
 │
 ├── Experiment-04-UDP-Server/
-│   ├── README.md                            # Datagram socket architecture & viva questions
+│   ├── README.md                            # Datagram socket architecture & algorithms
 │   ├── udp_server.c                         # Clean UDP echo server code
 │   └── screenshots/                         # Practical execution reference screenshots
 │
 ├── Experiment-05-UDP-Client/
-│   ├── README.md                            # Connectionless client mechanics & viva questions
+│   ├── README.md                            # Connectionless client mechanics & algorithms
 │   ├── udp_client.c                         # Clean UDP interactive client code
 │   └── screenshots/                         # Practical execution reference screenshots
 │
@@ -82,7 +82,7 @@ Computer-Networks-Lab/
 │   └── screenshots/                         # Wireshark trace & packet dissection screenshots
 │
 ├── Experiment-08-Sliding-Window/
-│   ├── README.md                            # Flow control theory, pipeline math & viva questions
+│   ├── README.md                            # Flow control theory, pipeline math & algorithms
 │   ├── sliding_window.c                     # Sliding window (Go-Back-N) simulation code
 │   └── screenshots/                         # Execution output screenshots
 │

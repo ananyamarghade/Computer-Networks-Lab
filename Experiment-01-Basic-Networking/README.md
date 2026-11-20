@@ -167,22 +167,3 @@ Key topologies include **Bus**, **Star**, **Ring**, **Mesh**, and **Hybrid**. Mo
 
 ## 10. Result / Conclusion
 The characteristics, operational layers, and architectural differences of primary computer networking elements were thoroughly studied. The distinction between physical (Layer 1), data link (Layer 2), and network (Layer 3) devices was established, confirming how switches eliminate packet collisions via port isolation and routers segment broadcast domains to facilitate internetwork communication.
-
----
-
-## 11. Important Viva Questions with Answers
-
-### Q1: What is the primary difference between a hub and a switch?
-**Answer:** A hub operates at Layer 1 (Physical layer) and broadcasts all incoming electrical signals to all ports indiscriminately, sharing a single collision domain. A switch operates at Layer 2 (Data Link layer), uses a MAC address table to forward frames selectively to the specific destination port, and provides an independent collision domain for each port.
-
-### Q2: Why does a router not forward broadcast packets by default?
-**Answer:** Routers define the boundary of a broadcast domain. Forwarding broadcasts across internetworks would trigger broadcast storms, saturating bandwidth and exhausting CPU resources across the global Internet. Broadcasts are restricted to their local subnet.
-
-### Q3: What is the function of a default gateway in a local network?
-**Answer:** The default gateway (typically a router interface) serves as the designated forwarding node for all packets whose destination IP addresses reside outside the local subnet. When a host determines that a destination is non-local, it resolves the gateway's MAC address via ARP and forwards the packet to it.
-
-### Q4: How does a switch learn MAC addresses?
-**Answer:** A switch dynamically builds its MAC address table (CAM table) by inspecting the **source MAC address** of every incoming frame received on each physical port and associating that address with the ingress port and VLAN.
-
-### Q5: At which OSI layers does a gateway operate?
-**Answer:** While any device translating protocols can be termed a gateway, true application gateways operate at Layers 4 through 7 of the OSI model, translating data representations, transport protocols, or session contexts across disparate systems.

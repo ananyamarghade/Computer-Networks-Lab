@@ -172,32 +172,3 @@ DNS messages are exchanged over UDP port `53`. The packet format contains:
 
 ## 8. Result / Conclusion
 Live network traffic was successfully captured and analyzed using Wireshark. The dissection confirmed the hierarchical encapsulation of Ethernet, IPv4, UDP, and TCP protocols. DNS query and response formats were verified via transaction IDs and status flags. The clear-text vulnerability of HTTP was demonstrated and contrasted with the encryption safeguards provided by HTTPS/TLS.
-
----
-
-## 9. Important Viva Questions with Answers
-
-### Q1: Why is typing `https` into Wireshark's display filter bar invalid?
-**Answer:** Wireshark organizes filters based on recognized protocol dissectors. "HTTPS" is not a standalone protocol dissector in Wireshark; rather, HTTPS represents HTTP transported over the **TLS (Transport Layer Security)** or **SSL** protocol. Therefore, the valid display filters are `tls`, `ssl`, or `tcp.port == 443`.
-
-### Q2: Can Wireshark decrypt HTTPS application data without private keys?
-**Answer:** No. Modern HTTPS connections use Ephemeral Diffie-Hellman key exchanges (DHE/ECDHE) to achieve **Perfect Forward Secrecy (PFS)**. Each session generates unique temporary session keys. Even possession of the server's long-term RSA private key cannot decrypt past traffic unless the client's dynamic pre-master secret is logged (e.g. via the `SSLKEYLOGFILE` environment variable).
-
-### Q3: What is the purpose of the Transaction ID in a DNS packet?
-**Answer:** Because DNS uses the connectionless UDP protocol, there is no persistent socket connection. The 16-bit Transaction ID enables the client's DNS resolver to match each asynchronous incoming response from the DNS server with the corresponding query it sent.
-
-### Q4: What information is visible in the clear during a TLS handshake?
-**Answer:** During the initial unencrypted TLS handshake, observers can inspect:
-1. **Client Hello:** Supported cipher suites, TLS version, and the **Server Name Indication (SNI)** extension (revealing the domain name being contacted).
-2. **Server Hello:** Chosen cipher suite and TLS version.
-3. **Certificate:** The server's public digital certificate containing its public key, issuer CA, and domain validity.
-
-### Q5: What does the `0x8180` DNS flag field signify?
-**Answer:** In hexadecimal, `0x8180` represents binary `1000 0001 1000 0000`:
-- Bit 0 (`QR = 1`): Packet is a Response.
-- Bits 1–4 (`Opcode = 0`): Standard Query.
-- Bit 5 (`AA = 0`): Non-Authoritative Answer.
-- Bit 6 (`TC = 0`): Not Truncated.
-- Bit 7 (`RD = 1`): Recursion was Desired.
-- Bit 8 (`RA = 1`): Recursion is Available on the server.
-- Bits 12–15 (`RCODE = 0`): No Error.

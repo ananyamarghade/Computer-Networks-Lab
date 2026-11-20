@@ -81,26 +81,3 @@ In UDP communication, the client does not establish a persistent virtual circuit
 
 ## 7. Result / Conclusion
 An interactive UDP client was successfully implemented in C using POSIX datagram sockets. The experiment demonstrated connectionless socket creation, packet encapsulation, datagram transmission using `sendto()`, and response reception using `recvfrom()`.
-
----
-
-## 8. Important Viva Questions with Answers
-
-### Q1: What happens if a UDP client sends data to a port where no server is running?
-**Answer:** The `sendto()` system call will still succeed locally and return the number of bytes written to the kernel buffer. However, the destination host will typically respond with an ICMP "Port Unreachable" message. If the UDP socket is unconnected, this ICMP error is usually not delivered to the application.
-
-### Q2: Can `connect()` be called on a UDP socket?
-**Answer:** Yes. Calling `connect()` on a UDP socket does not perform a network handshake; instead, it associates the socket descriptor with a specific remote IP and port in the local kernel. This allows the program to use `send()` and `recv()` instead of `sendto()` and `recvfrom()`, and filters incoming packets to only those from the connected peer.
-
-### Q3: Why is UDP preferred over TCP for real-time video streaming or online gaming?
-**Answer:** Real-time applications prioritize low latency over 100% reliability. TCP's retransmission delays, head-of-line blocking, and congestion back-off mechanisms cause unacceptable jitter. In contrast, UDP sends data immediately without retransmissions, allowing frames with minor loss to be skipped in favor of real-time continuity.
-
-### Q4: Does UDP provide flow control or congestion control?
-**Answer:** No. UDP does not implement flow control (sliding window) or congestion control (AIMD/slow start). If a UDP sender transmits faster than the receiver can process or faster than intermediate routers can forward, buffers overflow and packets are dropped.
-
-### Q5: What is the size of the UDP header, and what fields does it contain?
-**Answer:** The UDP header is fixed at **8 bytes** (64 bits) and contains four 16-bit fields:
-1. **Source Port** (16 bits)
-2. **Destination Port** (16 bits)
-3. **Length** (16 bits, header + payload length)
-4. **Checksum** (16 bits, error detection)

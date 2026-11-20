@@ -76,26 +76,3 @@ The User Datagram Protocol (UDP) is an un-sequenced, connectionless transport pr
 
 ## 7. Result / Conclusion
 A connectionless UDP echo server was successfully implemented in C using POSIX datagram sockets. The server demonstrated successful binding to port 10004, datagram packet reception via `recvfrom()`, message parsing, and echo reflection via `sendto()`.
-
----
-
-## 8. Important Viva Questions with Answers
-
-### Q1: Why are `listen()` and `accept()` not used in UDP socket programming?
-**Answer:** `listen()` and `accept()` are specific to connection-oriented protocols like TCP that require establishing a virtual circuit and state tracking before data transfer. Since UDP is connectionless and stateless, every datagram is self-contained with its own destination header. The server simply calls `recvfrom()` directly on the bound socket.
-
-### Q2: What is the maximum size of a UDP datagram?
-**Answer:** The theoretical maximum size of an IPv4 UDP packet is 65,535 bytes (65,507 bytes payload after subtracting the 20-byte IP header and 8-byte UDP header). However, packets larger than the link Maximum Transmission Unit (MTU, typically 1500 bytes for Ethernet) undergo IP fragmentation, which increases the likelihood of packet loss.
-
-### Q3: What happens to a UDP packet if the destination port is closed?
-**Answer:** The destination host's operating system kernel rejects the packet and sends an **ICMP Port Unreachable (Type 3, Code 3)** error packet back to the sender.
-
-### Q4: How does UDP verify packet integrity?
-**Answer:** UDP includes an optional 16-bit **checksum** field in its header. The checksum covers a 12-byte pseudo-header (containing source IP, destination IP, protocol number, and UDP length), the 8-byte UDP header, and the data payload. If the calculated checksum does not match, the packet is discarded silently.
-
-### Q5: Name four standard network protocols that run over UDP.
-**Answer:**
-1. **DNS (Domain Name System):** Port 53 (for low-latency queries).
-2. **DHCP (Dynamic Host Configuration Protocol):** Ports 67/68.
-3. **TFTP (Trivial File Transfer Protocol):** Port 69.
-4. **NTP (Network Time Protocol):** Port 123.

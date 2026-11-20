@@ -78,26 +78,3 @@ While a TCP server performs a **passive open** by binding to a port and waiting 
 
 ## 7. Result / Conclusion
 A connection-oriented TCP client was successfully implemented in C using POSIX stream sockets. The client demonstrated proper address conversion, active connection initiation via three-way handshake, payload transmission, synchronized response reception, and clean disconnection.
-
----
-
-## 8. Important Viva Questions with Answers
-
-### Q1: Why does a TCP client rarely call `bind()` explicitly?
-**Answer:** An explicit `bind()` binds a socket to a specific port. For clients, any available port is acceptable. The operating system kernel automatically selects an unused high-order ephemeral port when `connect()` is invoked, avoiding port collision issues.
-
-### Q2: What happens if `connect()` is called when the server is not listening?
-**Answer:** The destination host's operating system rejects the SYN packet and replies with a TCP segment with the **RST (Reset)** flag set. In C, `connect()` immediately returns `-1`, sets `errno` to `ECONNREFUSED`, and prints `Connection Failed`.
-
-### Q3: What is the purpose of `inet_pton()`?
-**Answer:** `inet_pton` ("presentation to numeric") safely converts an IP address string from human-readable text format (dotted-decimal for IPv4 or colon-hexadecimal for IPv6) into binary network byte order format suitable for inclusion in network socket structures.
-
-### Q4: How is a TCP connection terminated?
-**Answer:** TCP teardown uses a four-way handshake:
-1. Active closer calls `close()`, sending a **FIN** segment.
-2. Passive closer replies with **ACK** and enters `CLOSE_WAIT`.
-3. Passive closer calls `close()`, sending its own **FIN** segment.
-4. Active closer replies with **ACK**, enters `TIME_WAIT`, and closes after $2 \times \text{MSL}$.
-
-### Q5: How does TCP guarantee in-order delivery of packets?
-**Answer:** Every byte transmitted over a TCP connection is assigned a 32-bit sequence number. The receiver buffers incoming out-of-order segments and reassembles them sequentially according to their sequence numbers before delivering them to the application layer.

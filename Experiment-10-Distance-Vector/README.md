@@ -88,24 +88,3 @@ Where:
 
 ## 7. Result / Conclusion
 The Distance Vector Routing algorithm was successfully implemented in C using the Bellman-Ford algorithm. The simulation verified autonomous distributed path discovery, routing table convergence, next-hop recording, and shortest path calculation across all network nodes.
-
----
-
-## 8. Important Viva Questions with Answers
-
-### Q1: What is the Count-to-Infinity problem in Distance Vector routing?
-**Answer:** When a link fails, bad news travels slowly in Distance Vector routing. Adjacent routers may mistakenly believe their neighbor still has an alternate path to the disconnected destination, creating a routing loop where metric distance values increment continuously until reaching infinity (e.g. 16 in RIP).
-
-### Q2: How does the Split Horizon rule mitigate routing loops?
-**Answer:** The Split Horizon rule states that a router must never advertise a route back out through the same physical interface from which it originally learned that route, preventing two adjacent routers from bouncing packets back and forth.
-
-### Q3: What is Poison Reverse?
-**Answer:** Poison Reverse is an enhancement to Split Horizon. Instead of withholding routes learned from a neighbor, the router explicitly advertises those routes back to the neighbor with an infinite metric (e.g., metric = 16 in RIP), immediately invalidating any circular dependency.
-
-### Q4: Compare Distance Vector Routing (DVR) with Link State Routing (LSR).
-**Answer:**
-- **DVR:** Uses the Bellman-Ford algorithm. Routers send their entire routing table only to direct neighbors periodically. Slower convergence, vulnerable to loops, but low computational overhead.
-- **LSR:** Uses Dijkstra's algorithm. Routers flood link state advertisements (LSAs) describing only their immediate links to the entire network upon state changes. Fast convergence, no loops, but higher CPU and memory utilization.
-
-### Q5: What is the maximum hop count allowed in RIP, and why?
-**Answer:** The Routing Information Protocol (RIP) caps the maximum hop count at **15**. A metric value of **16 denotes infinity** (unreachable). This small limit boundaries the time required to detect network partitions and prevents infinite looping during convergence.

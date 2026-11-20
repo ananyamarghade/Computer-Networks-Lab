@@ -75,22 +75,3 @@ In computer networks, flow control prevents a fast sender from overwhelming a sl
 
 ## 7. Result / Conclusion
 The Sliding Window protocol was simulated in C. The experiment demonstrated pipelined transmission of multiple frames within the specified window, cumulative acknowledgment processing, window sliding, and retransmission recovery upon simulated channel errors.
-
----
-
-## 8. Important Viva Questions with Answers
-
-### Q1: What is the primary difference between Go-Back-N ARQ and Selective Repeat ARQ?
-**Answer:** In **Go-Back-N ARQ**, the receiver only accepts frames in strict sequential order and discards out-of-order frames; if a frame is lost, the sender retransmits the lost frame and all subsequent frames in the current window. In **Selective Repeat ARQ**, the receiver buffers out-of-order frames, and the sender retransmits **only** the specific frame that was lost or corrupted.
-
-### Q2: What is the maximum sender window size in Go-Back-N given $m$ sequence bits?
-**Answer:** For an $m$-bit sequence number field, the maximum sender window size in Go-Back-N is **$2^m - 1$**. If the window size were $2^m$, the receiver would be unable to distinguish between a new frame and a retransmission of an old frame if all ACKs were lost.
-
-### Q3: What is the maximum window size in Selective Repeat?
-**Answer:** In Selective Repeat ARQ, both sender and receiver window sizes must be at most **$2^{m-1}$** (half of the sequence space) to avoid overlap between new and retransmitted frame sequence numbers.
-
-### Q4: How does sliding window improve channel efficiency compared to Stop-and-Wait?
-**Answer:** In Stop-and-Wait, efficiency is $\eta = \frac{T_t}{T_t + 2 T_p}$. In Sliding Window with window size $N$, efficiency becomes $\eta = \min\left(1, \frac{N \times T_t}{T_t + 2 T_p}\right)$. By keeping the pipeline full during the Round Trip Time ($2 T_p$), idle channel waiting time is eliminated.
-
-### Q5: What is piggybacking in sliding window protocols?
-**Answer:** Piggybacking is an optimization technique where outgoing acknowledgments are temporarily delayed so they can be attached to an outgoing data frame traveling in the reverse direction, reducing protocol header overhead.
